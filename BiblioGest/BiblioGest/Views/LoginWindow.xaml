@@ -1,0 +1,38 @@
+<Window x:Class="BiblioGest.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Connexion à la Bibliothèque" Height="350" Width="450"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titre -->
+        <TextBlock Grid.Row="0" Text="Système de Gestion de Bibliothèque" 
+                   FontSize="20" FontWeight="Bold" Margin="0,20"
+                   HorizontalAlignment="Center"/>
+        
+        <!-- Formulaire de connexion -->
+        <StackPanel Grid.Row="1" Width="300">
+            <TextBlock Text="Identifiant:" Margin="0,5"/>
+            <TextBox x:Name="txtIdentifiant" Padding="5" Margin="0,0,0,15"/>
+            
+            <TextBlock Text="Mot de passe:" Margin="0,5"/>
+            <PasswordBox x:Name="txtMotDePasse" Padding="5" Margin="0,0,0,25"/>
+            
+            <Button x:Name="btnConnexion" Content="Se connecter" Padding="5" 
+                    Height="35" Background="#007ACC" Foreground="White"
+                    Click="BtnConnexion_Click"/>
+            
+            <TextBlock x:Name="txtErreur" Foreground="Red" Margin="0,15,0,0"
+                       TextWrapping="Wrap" HorizontalAlignment="Center"/>
+        </StackPanel>
+        
+        <!-- Pied de page -->
+        <TextBlock Grid.Row="2" Text="© 2025 Système de Gestion de Bibliothèque" 
+                   Margin="10" HorizontalAlignment="Center" Opacity="0.7"/>
+    </Grid>
+</Window>
