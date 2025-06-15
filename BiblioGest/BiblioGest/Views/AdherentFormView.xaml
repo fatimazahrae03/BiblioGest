@@ -1,0 +1,139 @@
+<Window x:Class="BiblioGest.Views.AdherentFormView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BiblioGest.Views"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}"
+        Height="600" Width="550"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="FieldLabel">
+            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+        
+        <Style TargetType="DatePicker">
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+        
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+        </Style>
+    </Window.Resources>
+    
+    <Border Background="#f8f9fa" Padding="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- En-tête -->
+            <TextBlock Text="{Binding WindowTitle}" 
+                       FontSize="22" 
+                       FontWeight="Bold" 
+                       Margin="0,0,0,20"/>
+            
+            <!-- Formulaire -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- Nom -->
+                    <TextBlock Text="Nom *" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Adherent.Nom, UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <!-- Prénom -->
+                    <TextBlock Text="Prénom *" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Adherent.Prenom, UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <!-- Adresse -->
+                    <TextBlock Text="Adresse" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Adherent.Adresse, UpdateSourceTrigger=PropertyChanged}" 
+                             Height="60" 
+                             TextWrapping="Wrap" 
+                             AcceptsReturn="True"/>
+                    
+                    <!-- Email -->
+                    <TextBlock Text="Email" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Adherent.Email, UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <!-- Téléphone -->
+                    <TextBlock Text="Téléphone" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Adherent.Telephone, UpdateSourceTrigger=PropertyChanged}"/>
+                    
+                    <!-- Date d'inscription -->
+                    <TextBlock Text="Date d'inscription *" Style="{StaticResource FieldLabel}"/>
+                    <DatePicker SelectedDate="{Binding Adherent.DateInscription, UpdateSourceTrigger=PropertyChanged}" />
+                    
+                    <!-- Date fin d'adhésion -->
+                    <TextBlock Text="Date de fin d'adhésion" Style="{StaticResource FieldLabel}"/>
+                    <DatePicker SelectedDate="{Binding Adherent.DateFinAdhesion, UpdateSourceTrigger=PropertyChanged}" />
+                    
+                    <!-- Statut -->
+                    <TextBlock Text="Statut *" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox ItemsSource="{Binding StatusList}"
+                              SelectedItem="{Binding SelectedStatus, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="Label"/>
+                    
+                    <!-- Message d'erreur -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               Foreground="Red" 
+                               TextWrapping="Wrap"
+                               Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Margin="0,0,0,15"/>
+                </StackPanel>
+            </ScrollViewer>
+            
+            <!-- Boutons d'action -->
+            <Grid Grid.Row="2" Margin="0,20,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="1" 
+                        Content="Annuler" 
+                        Width="100"
+                        Margin="0,0,10,0"
+                        Padding="10,8"
+                        Background="#e0e0e0"
+                        BorderThickness="0"
+                        Command="{Binding CancelCommand}"/>
+                
+                <Button Grid.Column="2" 
+                        Content="Enregistrer" 
+                        Width="100"
+                        Padding="10,8"
+                        Background="#27ae60"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding SaveCommand}"/>
+            </Grid>
+            
+            <!-- Indicateur de chargement -->
+            <Grid Grid.RowSpan="3" 
+                  Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Rectangle Fill="#80000000"/>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Traitement en cours..." 
+                               Foreground="White" 
+                               FontSize="16" 
+                               Margin="0,0,0,10"/>
+                    <ProgressBar IsIndeterminate="True" Width="200" Height="10"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

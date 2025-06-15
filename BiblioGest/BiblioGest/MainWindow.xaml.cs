@@ -1,17 +1,17 @@
 ﻿using System.Windows;
+using BiblioGest.ViewModels;
+using BiblioGest.Models;
 
-namespace BiblioGest
+namespace BiblioGest.Views
 {
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(Bibliothecaire utilisateurConnecte)
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Tu as cliqué le bouton 🚀", "Message");
+            
+            // Initialiser et définir le contexte de données de la fenêtre
+            DataContext = new MainViewModel(utilisateurConnecte, this);
         }
     }
 }

@@ -1,78 +1,58 @@
-using System;
 using System.Windows;
-using System.Windows.Input; 
+using System.Windows.Controls;
+using BiblioGest.Services;
+using System.Linq;
 
-// Choisissez un seul namespace cohérent pour tout votre projet
 namespace BiblioGest.Views
 {
     public partial class LoginWindow : Window
     {
-        private readonly Services.AuthenticationService _authService;
-
+        private readonly UserPreferencesService _preferencesService;
+        
         public LoginWindow()
         {
             InitializeComponent();
+            
+            _preferencesService = new UserPreferencesService();
+            
+            // Pour lier le PasswordBox (qui n'a pas de binding de données normal)
+            PasswordBox.PasswordChanged += PasswordBox_PasswordChanged;
+            
+            // Initialiser le mot de passe depuis le ViewModel lorsque la fenêtre est chargée
+            Loaded += LoginWindow_Loaded;
+        }
 
-            try
+        private void LoginWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is ViewModels.LoginViewModel viewModel)
             {
-                _authService = new Services.AuthenticationService();
+                // Remplir la ComboBox avec les identifiants sauvegardés
+                LoadSavedUsernames();
+                
+                // Définir le mot de passe si disponible
+                if (!string.IsNullOrEmpty(viewModel.MotDePasse))
+                {
+                    PasswordBox.Password = viewModel.MotDePasse;
+                }
             }
-            catch (Exception ex)
+        }
+        
+        private void LoadSavedUsernames()
+        {
+            // Récupérer tous les identifiants sauvegardés
+            var savedCredentials = _preferencesService.GetAllSavedCredentials();
+            if (savedCredentials != null && savedCredentials.Count > 0)
             {
-                MessageBox.Show($"Erreur avec le service d'authentification : {ex.Message}", "Erreur",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                // Remplir la ComboBox avec les noms d'utilisateur
+                UserComboBox.ItemsSource = savedCredentials.Select(c => c.Username).ToList();
             }
         }
 
-        private void BtnConnexion_Click(object sender, RoutedEventArgs e)
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            // Désactiver le bouton pour éviter les doubles clics
-            btnConnexion.IsEnabled = false;
-            txtErreur.Text = string.Empty;
-            
-            try
+            if (DataContext is ViewModels.LoginViewModel viewModel)
             {
-                string identifiant = txtIdentifiant.Text;
-                string motDePasse = txtMotDePasse.Password;
-                
-                // Validation des champs
-                if (string.IsNullOrWhiteSpace(identifiant) || string.IsNullOrWhiteSpace(motDePasse))
-                {
-                    txtErreur.Text = "Veuillez remplir tous les champs.";
-                    return;
-                }
-                
-                // Tentative d'authentification
-                Models.Bibliothecaire utilisateur = _authService.Authentifier(identifiant, motDePasse);
-                
-                if (utilisateur != null)
-                {
-                    // Succès de connexion
-                    // Stockage des informations de l'utilisateur connecté dans l'application
-                    App.UtilisateurConnecte = utilisateur;
-                    
-                    // Ouverture de la fenêtre principale et fermeture de la fenêtre de connexion
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.Show();
-                    this.Close();
-                }
-                else
-                {
-                    // Échec de connexion
-                    txtErreur.Text = "Identifiant ou mot de passe incorrect.";
-                    txtMotDePasse.Password = string.Empty;
-                    txtMotDePasse.Focus();
-                }
-            }
-            catch (Exception ex)
-            {
-                txtErreur.Text = $"Erreur lors de la connexion: {ex.Message}";
-            }
-            finally
-            {
-                // Réactiver le bouton
-                btnConnexion.IsEnabled = true;
+                viewModel.MotDePasse = ((PasswordBox)sender).Password;
             }
         }
     }

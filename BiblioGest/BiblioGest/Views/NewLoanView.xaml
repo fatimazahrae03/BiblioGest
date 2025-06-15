@@ -1,0 +1,295 @@
+<UserControl x:Class="BiblioGest.Views.NewLoanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="800">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- En-tête -->
+        <TextBlock Grid.Row="0" 
+                   Text="Nouvel Emprunt" 
+                   FontSize="24" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,20"/>
+        
+        <!-- Formulaire principal -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Colonne gauche: Adhérent et Livre -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <!-- Section adhérent -->
+                <Border Background="White" 
+                        CornerRadius="5" 
+                        Padding="15" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Adhérent" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,10"/>
+                        
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBox Grid.Column="0" 
+                                     Height="32" 
+                                     VerticalContentAlignment="Center"
+                                     Padding="5,0"
+                                     Text="{Binding AdherentSearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                            
+                            <Button Grid.Column="1" 
+                                    Content="Rechercher" 
+                                    Height="32" 
+                                    Padding="15,0" 
+                                    Margin="10,0,0,0"
+                                    Command="{Binding SearchAdherentCommand}">
+                                <Button.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+                        
+                        <ListBox Height="150" 
+                                 ItemsSource="{Binding Adherents}" 
+                                 SelectedItem="{Binding SelectedAdherent}"
+                                 DisplayMemberPath="NomComplet"
+                                 BorderThickness="1"
+                                 BorderBrush="#ecf0f1"/>
+                        
+                        <Grid Margin="0,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="ID:" Margin="0,0,10,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedAdherent.AdherentId}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Statut:" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedAdherent.Statut}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Section livre -->
+                <Border Background="White" 
+                        CornerRadius="5" 
+                        Padding="15" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Livre" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,10"/>
+                        
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBox Grid.Column="0" 
+                                     Height="32" 
+                                     VerticalContentAlignment="Center"
+                                     Padding="5,0"
+                                     Text="{Binding LivreSearchQuery, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                            
+                            <Button Grid.Column="1" 
+                                    Content="Rechercher" 
+                                    Height="32" 
+                                    Padding="15,0" 
+                                    Margin="10,0,0,0"
+                                    Command="{Binding SearchLivreCommand}">
+                                <Button.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </Button.Resources>
+                            </Button>
+                        </Grid>
+                        
+                        <ListBox Height="150" 
+                                 ItemsSource="{Binding Livres}" 
+                                 SelectedItem="{Binding SelectedLivre}"
+                                 BorderThickness="1"
+                                 BorderBrush="#ecf0f1">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Titre}" FontWeight="Bold"/>
+                                        <TextBlock Text="{Binding Auteur}" FontStyle="Italic"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+            
+            <!-- Colonne droite: Exemplaires et détails du prêt -->
+            <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                <!-- Section exemplaires disponibles -->
+                <Border Background="White" 
+                        CornerRadius="5" 
+                        Padding="15" 
+                        Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Exemplaires disponibles" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,10"/>
+                        
+                        <ListBox Height="150" 
+                                 ItemsSource="{Binding ExemplairesDisponibles}" 
+                                 SelectedItem="{Binding SelectedExemplaire}"
+                                 BorderThickness="1"
+                                 BorderBrush="#ecf0f1">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Grid.Column="0" Text="{Binding CodeInventaire}"/>
+                                        <TextBlock Grid.Column="1" Text="|" Margin="5,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Etat}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        
+                        <Grid Margin="0,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Localisation:" Margin="0,0,10,5"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding SelectedExemplaire.Localisation}" Margin="0,0,0,5"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="État:" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding SelectedExemplaire.Etat}"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- Section détails du prêt -->
+                <Border Background="White" 
+                        CornerRadius="5" 
+                        Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Détails du prêt" 
+                                   FontWeight="Bold" 
+                                   Margin="0,0,0,10"/>
+                        
+                        <Grid Margin="0,0,0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Date d'emprunt:" Margin="0,0,10,10"/>
+                            <DatePicker Grid.Row="0" Grid.Column="1" 
+                                        SelectedDate="{Binding DateEmprunt}" 
+                                        Margin="0,0,0,10"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Date de retour prévue:" Margin="0,0,10,10"/>
+                            <DatePicker Grid.Row="1" Grid.Column="1" 
+                                        SelectedDate="{Binding DateRetourPrevue}" 
+                                        Margin="0,0,0,10"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Remarques:" Margin="0,0,10,0" VerticalAlignment="Top"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" 
+                                     Height="80" 
+                                     TextWrapping="Wrap" 
+                                     AcceptsReturn="True"
+                                     VerticalScrollBarVisibility="Auto"
+                                     Text="{Binding Remarques}">
+                                <TextBox.Resources>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                    </Style>
+                                </TextBox.Resources>
+                            </TextBox>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Boutons d'action -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,20,0,0">
+            <Button Content="Annuler" 
+                    Height="32" 
+                    Width="100" 
+                    Margin="0,0,10,0"
+                    Command="{Binding CancelCommand}">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="4"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <Button Content="Enregistrer" 
+                    Height="32" 
+                    Width="150" 
+                    Background="#2ecc71" 
+                    Foreground="White" 
+                    BorderThickness="0"
+                    Command="{Binding SaveLoanCommand}">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="CornerRadius" Value="4"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

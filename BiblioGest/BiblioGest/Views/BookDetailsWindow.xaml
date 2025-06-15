@@ -1,0 +1,270 @@
+<Window x:Class="BiblioGest.Views.BookDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BiblioGest.Views"
+        mc:Ignorable="d"
+        Title="Détails du livre" 
+        Height="550" 
+        Width="800"
+        WindowStartupLocation="CenterOwner">
+    
+    <Window.Resources>
+        <Style x:Key="DefaultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498db"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style x:Key="ActionButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="Margin" Value="2,0"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+        
+        <Style x:Key="ModifyButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+            <Setter Property="Background" Value="#f39c12"/>
+        </Style>
+        
+        <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+            <Setter Property="Background" Value="#e74c3c"/>
+        </Style>
+        
+        <Style x:Key="AddButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Background" Value="#2ecc71"/>
+        </Style>
+        
+        <!-- Convertisseur pour la disponibilité -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Informations du livre -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Image de couverture ou placeholder -->
+            <Border Grid.Column="0" 
+                    Width="120" 
+                    Height="160" 
+                    Background="#f5f6fa" 
+                    BorderThickness="1" 
+                    BorderBrush="#ecf0f1" 
+                    Margin="0,0,20,0">
+                <TextBlock Text="Couverture" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center" 
+                           Foreground="#bdc3c7"/>
+            </Border>
+            
+            <!-- Informations textuelles -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Titre -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                           Text="{Binding Livre.Titre}" 
+                           FontSize="22" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,10"/>
+                
+                <!-- Auteur -->
+                <TextBlock Grid.Row="1" Grid.Column="0"
+                           Text="Auteur:" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,5"/>
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                           Text="{Binding Livre.Auteur}" 
+                           Margin="0,0,0,5"/>
+                
+                <!-- ISBN -->
+                <TextBlock Grid.Row="2" Grid.Column="0"
+                           Text="ISBN:" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,5"/>
+                <TextBlock Grid.Row="2" Grid.Column="1"
+                           Text="{Binding Livre.ISBN}" 
+                           Margin="0,0,0,5"/>
+                
+                <!-- Éditeur et Année -->
+                <TextBlock Grid.Row="3" Grid.Column="0"
+                           Text="Publication:" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,5"/>
+                <TextBlock Grid.Row="3" Grid.Column="1"
+                           Text="{Binding PublicationInfo}" 
+                           Margin="0,0,0,5"/>
+                
+                <!-- Catégorie -->
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                           Text="Catégorie:" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,5"/>
+                <TextBlock Grid.Row="4" Grid.Column="1"
+                           Text="{Binding Livre.Categorie.Nom}" 
+                           Margin="0,0,0,5"/>
+                
+                <!-- Résumé -->
+                <TextBlock Grid.Row="5" Grid.Column="0"
+                           Text="Résumé:" 
+                           FontWeight="SemiBold"
+                           Margin="0,0,10,5"
+                           VerticalAlignment="Top"/>
+                <TextBlock Grid.Row="5" Grid.Column="1"
+                           Text="{Binding Livre.Resume}" 
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,5"/>
+            </Grid>
+        </Grid>
+        
+        <!-- Liste des exemplaires -->
+        <Grid Grid.Row="1" Margin="0,20,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- En-tête de la section exemplaires -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0"
+                           Text="Exemplaires" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Margin="0,0,0,10"/>
+                
+                <TextBlock Grid.Column="1"
+                           Text="{Binding ExemplairesSummary}" 
+                           Margin="0,0,0,10"/>
+            </Grid>
+            
+            <!-- Tableau des exemplaires avec événement MouseDoubleClick -->
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding Exemplaires}"
+                      SelectedItem="{Binding SelectedExemplaire, Mode=TwoWay}" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      BorderThickness="1"
+                      BorderBrush="#ecf0f1"
+                      Background="Transparent"
+                      RowBackground="White"
+                      AlternatingRowBackground="#f8f9fa"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Code Inventaire" Binding="{Binding CodeInventaire}" Width="Auto"/>
+                    <DataGridTextColumn Header="État" Binding="{Binding Etat}" Width="Auto"/>
+                    <DataGridTextColumn Header="Localisation" Binding="{Binding Localisation}" Width="*"/>
+                    <DataGridTemplateColumn Header="Statut" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <!-- Condition sur EstDisponible -->
+                                    <StackPanel Orientation="Horizontal" Visibility="{Binding EstDisponible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Ellipse Width="10" Height="10" Fill="#2ecc71" Margin="0,0,5,0"/>
+                                        <TextBlock Text="Disponible" Foreground="#2ecc71"/>
+                                    </StackPanel>
+                
+                                    <!-- Condition inverse sur EstDisponible -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding EstDisponible}" Value="False">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <Ellipse Width="10" Height="10" Fill="#e74c3c" Margin="0,0,5,0"/>
+                                        <TextBlock Text="Emprunté" Foreground="#e74c3c"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <!-- Colonne pour les actions (Modifier et Supprimer) -->
+                    <DataGridTemplateColumn Header="Actions" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Modifier" 
+                                            Style="{StaticResource ModifyButtonStyle}"
+                                            Command="{Binding DataContext.EditExemplaireCommand, 
+                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                    <Button Content="Supprimer" 
+                                            Style="{StaticResource DeleteButtonStyle}"
+                                            Command="{Binding DataContext.DeleteExemplaireCommand, 
+                                                      RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+                
+                <!-- Ajouter un ToolTip pour indiquer la fonctionnalité de double-clic -->
+                <DataGrid.ToolTip>
+                    <ToolTip>
+                        <TextBlock Text="Double-cliquez sur un exemplaire pour afficher son historique d'emprunts"/>
+                    </ToolTip>
+                </DataGrid.ToolTip>
+            </DataGrid>
+        </Grid>
+        
+        <!-- Boutons d'action en bas -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,20,0,0">
+            
+            <!-- Bouton Ajouter un exemplaire -->
+            <Button Content="Ajouter un exemplaire" 
+                    Style="{StaticResource AddButtonStyle}"
+                    Command="{Binding AddExemplaireCommand}"
+                    Margin="0,0,10,0"
+                    Padding="15,7"/>
+            
+            <!-- Bouton fermer -->
+            <Button Content="Fermer" 
+                    Padding="20,7" 
+                    Command="{Binding CloseCommand}"
+                    Style="{StaticResource DefaultButtonStyle}"/>
+        </StackPanel>
+    </Grid>
+</Window>

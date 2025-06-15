@@ -1,0 +1,172 @@
+<UserControl x:Class="BiblioGest.Views.BooksView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Entête avec recherche et filtres -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Barre de recherche -->
+            <Border Grid.Column="0" 
+                    CornerRadius="4" 
+                    BorderThickness="1" 
+                    BorderBrush="#bdc3c7" 
+                    Background="White" 
+                    Padding="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBox Grid.Column="0" 
+                             Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                             BorderThickness="0" 
+                             VerticalAlignment="Center"
+                             Padding="5,0"/>
+                    
+                    <Button Grid.Column="1" 
+                            Content="🔍" 
+                            Command="{Binding SearchCommand}" 
+                            BorderThickness="0" 
+                            Background="Transparent" 
+                            Foreground="#7f8c8d" 
+                            Padding="5" 
+                            Cursor="Hand"/>
+                </Grid>
+            </Border>
+            
+            <!-- Filtre par catégorie -->
+            <TextBlock Grid.Column="1" 
+                       Text="Catégorie:" 
+                       VerticalAlignment="Center" 
+                       Margin="15,0,5,0"/>
+            
+            <ComboBox Grid.Column="2" 
+                      ItemsSource="{Binding FilterOptions}" 
+                      SelectedItem="{Binding SelectedFilter}"
+                      Width="150" 
+                      Margin="0,0,15,0"/>
+            
+            <!-- Bouton Ajouter -->
+            <Button Grid.Column="3" 
+                    Content="+ Ajouter un livre" 
+                    Command="{Binding AddBookCommand}" 
+                    Style="{StaticResource DefaultButtonStyle}" 
+                    Padding="15,5"/>
+        </Grid>
+        
+        <!-- Liste des livres -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="5" 
+                BorderThickness="1" 
+                BorderBrush="#ecf0f1">
+            <DataGrid ItemsSource="{Binding DisplayedBooks}" 
+                      SelectedItem="{Binding SelectedBook}" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="Horizontal"
+                      BorderThickness="0"
+                      Background="Transparent"
+                      RowBackground="White"
+                      AlternatingRowBackground="#f8f9fa"
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Titre" Binding="{Binding Titre}" Width="*"/>
+                    <DataGridTextColumn Header="Auteur" Binding="{Binding Auteur}" Width="*"/>
+                    <DataGridTextColumn Header="ISBN" Binding="{Binding ISBN}" Width="Auto"/>
+                    <DataGridTextColumn Header="Année" Binding="{Binding Annee}" Width="Auto"/>
+                    <DataGridTextColumn Header="Éditeur" Binding="{Binding Editeur}" Width="*"/>
+                    <DataGridTextColumn Header="Catégorie" Binding="{Binding Categorie.Nom}" Width="Auto"/>
+                    <DataGridTextColumn Header="Exemplaires" Binding="{Binding NombreExemplaires}" Width="Auto"/>
+                    <DataGridTemplateColumn Header="Actions" Width="Auto">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="✏️" 
+                                            Command="{Binding DataContext.EditBookCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Modifier"
+                                            Margin="2" 
+                                            Padding="5,0" 
+                                            Background="Transparent" 
+                                            BorderThickness="0"/>
+                                    <Button Content="🗑️" 
+                                            Command="{Binding DataContext.DeleteBookCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Supprimer"
+                                            Margin="2" 
+                                            Padding="5,0" 
+                                            Background="Transparent" 
+                                            BorderThickness="0"
+                                            Foreground="#e74c3c"/>
+                                    <Button Content="👁️" 
+                                            Command="{Binding DataContext.ViewBookDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                            CommandParameter="{Binding}" 
+                                            ToolTip="Voir les détails"
+                                            Margin="2" 
+                                            Padding="5,0" 
+                                            Background="Transparent" 
+                                            BorderThickness="0"
+                                            Foreground="#2980b9"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        
+        <!-- Contrôles de pagination -->
+        <Grid Grid.Row="2" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="1" 
+                       Text="{Binding CurrentPageDisplay}" 
+                       VerticalAlignment="Center" 
+                       Margin="0,0,15,0"/>
+            
+            <Button Grid.Column="2" 
+                    Content="◀ Précédent" 
+                    Command="{Binding PreviousPageCommand}" 
+                    Style="{StaticResource DefaultButtonStyle}" 
+                    Width="100" 
+                    Margin="0,0,5,0"/>
+            
+            <Button Grid.Column="3" 
+                    Content="Suivant ▶" 
+                    Command="{Binding NextPageCommand}" 
+                    Style="{StaticResource DefaultButtonStyle}" 
+                    Width="100" 
+                    Margin="5,0,0,0"/>
+        </Grid>
+    </Grid>
+</UserControl>

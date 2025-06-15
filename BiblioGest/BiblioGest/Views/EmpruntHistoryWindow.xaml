@@ -1,0 +1,88 @@
+<Window x:Class="BiblioGest.Views.EmpruntHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BiblioGest.Views"
+        mc:Ignorable="d"
+        Title="Historique des emprunts" 
+        Height="450" 
+        Width="700"
+        WindowStartupLocation="CenterOwner">
+    
+    <Window.Resources>
+        <Style x:Key="DefaultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498db"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- En-tête -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Historique des emprunts" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Margin="0,0,0,5"/>
+                <TextBlock Text="{Binding HeaderInfo}" 
+                           FontSize="14"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Liste des emprunts -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Emprunts}"
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True" 
+                  HeadersVisibility="Column"
+                  GridLinesVisibility="Horizontal"
+                  BorderThickness="1"
+                  BorderBrush="#ecf0f1"
+                  Background="Transparent"
+                  RowBackground="White"
+                  AlternatingRowBackground="#f8f9fa"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date d'emprunt" Binding="{Binding DateEmprunt, StringFormat={}{0:dd/MM/yyyy}}" Width="Auto"/>
+                <DataGridTextColumn Header="Date retour prévue" Binding="{Binding DateRetourPrevue, StringFormat={}{0:dd/MM/yyyy}}" Width="Auto"/>
+                <DataGridTextColumn Header="Date retour effective" Width="Auto">
+                    <DataGridTextColumn.Binding>
+                        <MultiBinding StringFormat="{}{0}">
+                            <Binding Path="DateRetourEffective" StringFormat="{}{0:dd/MM/yyyy}" TargetNullValue="-"/>
+                        </MultiBinding>
+                    </DataGridTextColumn.Binding>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Statut" Binding="{Binding Statut}" Width="Auto"/>
+                <DataGridTextColumn Header="Adhérent" Binding="{Binding AdherentNom}" Width="*"/>
+                <DataGridTextColumn Header="Remarques" Binding="{Binding Remarques}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <!-- Bouton fermer -->
+        <Button Grid.Row="2" 
+                Content="Fermer" 
+                HorizontalAlignment="Right" 
+                Margin="0,15,0,0"
+                Padding="20,7" 
+                Command="{Binding CloseCommand}"
+                Style="{StaticResource DefaultButtonStyle}"/>
+    </Grid>
+</Window>

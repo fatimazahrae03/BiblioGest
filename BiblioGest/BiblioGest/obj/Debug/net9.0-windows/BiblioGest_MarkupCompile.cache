@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP
 C:\Users\DELL PRECISION\Desktop\projet-gestion-biblio\BiblioGest\BiblioGest\BiblioGest\App.xaml
-21594365281
+142023704072
 
-11-858160910
-210-1065562674
-MainWindow.xaml;Views\LoginWindow.xaml;
+441807504928
+2281593381231
+MainWindow.xaml;Resources.xaml;Views\AdherentFormView.xaml;Views\AdherentsView.xaml;Views\BookDetailsWindow.xaml;Views\BookFormView.xaml;Views\BookFormWindow.xaml;Views\BooksView.xaml;Views\EmpruntAdherentHistoryView.xaml;Views\EmpruntHistoryWindow.xaml;Views\ExemplaireDialog.xaml;Views\LoansView.xaml;Views\LoginWindow.xaml;Views\NewLoanView.xaml;
 
 False
 

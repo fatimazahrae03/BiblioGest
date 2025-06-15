@@ -1,0 +1,134 @@
+<Window x:Class="BiblioGest.Views.ExemplaireDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BiblioGest.Views"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}" 
+        Height="300" 
+        Width="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <Style x:Key="DefaultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498db"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style x:Key="SaveButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Background" Value="#2ecc71"/>
+        </Style>
+        
+        <Style x:Key="CancelButtonStyle" TargetType="Button" BasedOn="{StaticResource DefaultButtonStyle}">
+            <Setter Property="Background" Value="#7f8c8d"/>
+        </Style>
+        
+        <Style x:Key="ErrorTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#e74c3c"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Margin" Value="0,2,0,5"/>
+        </Style>
+        
+        <Style x:Key="FormLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        
+        <Style x:Key="FormTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#bdc3c7"/>
+        </Style>
+        
+        <Style x:Key="FormComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#bdc3c7"/>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titre du formulaire -->
+        <TextBlock Grid.Row="0" 
+                   Text="{Binding FormTitle}" 
+                   FontSize="20" 
+                   FontWeight="Bold" 
+                   Margin="0,0,0,15"/>
+        
+        <!-- Formulaire -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <!-- Code Inventaire -->
+            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock Text="Code Inventaire:" Style="{StaticResource FormLabelStyle}"/>
+                <TextBox Text="{Binding CodeInventaire, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource FormTextBoxStyle}"/>
+                <TextBlock Text="{Binding ErrorCodeInventaire}" 
+                          Style="{StaticResource ErrorTextStyle}" 
+                          Visibility="{Binding HasErrorCodeInventaire, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+            
+            <!-- État -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Margin="10,0,0,0">
+                <TextBlock Text="État:" Style="{StaticResource FormLabelStyle}"/>
+                <ComboBox ItemsSource="{Binding EtatsDisponibles}" 
+                          SelectedItem="{Binding Etat}" 
+                          Style="{StaticResource FormComboBoxStyle}"/>
+                <TextBlock Text="{Binding ErrorEtat}" 
+                          Style="{StaticResource ErrorTextStyle}" 
+                          Visibility="{Binding HasErrorEtat, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+            
+            <!-- Localisation -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                <TextBlock Text="Localisation:" Style="{StaticResource FormLabelStyle}"/>
+                <TextBox Text="{Binding Localisation, UpdateSourceTrigger=PropertyChanged}" 
+                         Style="{StaticResource FormTextBoxStyle}"/>
+                <TextBlock Text="{Binding ErrorLocalisation}" 
+                          Style="{StaticResource ErrorTextStyle}" 
+                          Visibility="{Binding HasErrorLocalisation, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Boutons d'action -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Right" 
+                    Margin="0,10,0,0">
+            
+            <Button Content="Annuler" 
+                    Command="{Binding CancelCommand}" 
+                    Style="{StaticResource CancelButtonStyle}" 
+                    Padding="15,7" 
+                    Margin="0,0,10,0"/>
+            
+            <Button Content="Enregistrer" 
+                    Command="{Binding SaveCommand}" 
+                    Style="{StaticResource SaveButtonStyle}" 
+                    IsEnabled="{Binding CanSave}"
+                    Padding="15,7"/>
+        </StackPanel>
+    </Grid>
+</Window>

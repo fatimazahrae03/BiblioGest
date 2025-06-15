@@ -1,14 +1,353 @@
-﻿<Window x:Class="BiblioGest.MainWindow"
+﻿<Window x:Class="BiblioGest.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Bienvenue WPF" Height="200" Width="300">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:BiblioGest.ViewModels"
+        xmlns:local="clr-namespace:BiblioGest.Views"
+        mc:Ignorable="d"
+        Title="BiblioGest - Gestion de Bibliothèque" 
+        Height="600" 
+        Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0,5,0,5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height" Value="40"/>
+        </Style>
+        
+        <Style x:Key="DefaultButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498db"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    
+        <!-- Convertisseur BooleanToVisibility -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    
     <Grid>
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Bonjour WPF 🎈" 
-                       FontSize="20" 
-                       HorizontalAlignment="Center" 
-                       Margin="0,0,0,20"/>
-            <Button Content="Clique moi" Width="100" Click="Button_Click"/>
-        </StackPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Menu latéral -->
+        <Border Grid.Column="0" Background="#2c3e50">
+            <StackPanel>
+                <TextBlock Text="BiblioGest" 
+                           FontSize="24" 
+                           Foreground="White" 
+                           FontWeight="Bold" 
+                           Margin="15,20,0,30" 
+                           HorizontalAlignment="Center"/>
+                
+                <Button Content="Tableau de bord" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#34495e"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Dashboard"/>
+                
+                <Button Content="Gestion des livres" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Books"/>
+                
+                <Button Content="Gestion des adhérents" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Members"/>
+                
+                <Button Content="Emprunts/Retours" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Loans"/>
+                
+                <Button Content="Statistiques" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Statistics"/>
+                
+                <Button Content="Paramètres" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="Transparent"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NavigateCommand}"
+                        CommandParameter="Settings"/>
+                
+                <Separator Margin="10,20" Background="#7f8c8d"/>
+                
+                <StackPanel Orientation="Horizontal" Margin="10,10,10,5">
+                    <Ellipse Width="40" Height="40">
+                        <Ellipse.Fill>
+                            <SolidColorBrush Color="#ecf0f1"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <StackPanel Margin="10,0,0,0">
+                        <TextBlock Text="{Binding CurrentUser.Nom}" FontSize="14" Foreground="White"/>
+                        <TextBlock Text="{Binding CurrentUser.Role}" FontSize="12" Foreground="#bdc3c7"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <Button Content="Déconnexion" 
+                        Style="{StaticResource MenuButtonStyle}"
+                        Background="#e74c3c"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Margin="10,10,10,0"
+                        Command="{Binding LogoutCommand}"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- Contenu principal -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <!-- En-tête -->
+            <Border Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="#ecf0f1" Background="White">
+                <Grid>
+                    <TextBlock Text="{Binding CurrentViewTitle}" 
+                               FontSize="20" 
+                               FontWeight="SemiBold" 
+                               VerticalAlignment="Center" 
+                               Margin="20,0,0,0"/>
+                    
+                    <TextBlock Text="{Binding CurrentDateTime, StringFormat='{}{0:dd MMMM yyyy, HH:mm}'}" 
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Margin="0,0,20,0"
+                               Foreground="#7f8c8d"/>
+                </Grid>
+            </Border>
+            
+            <!-- Zone de contenu principale -->
+            <Border Grid.Row="1" Background="#f5f6fa" Padding="20">
+                <Grid>
+                    <!-- Tableau de bord (statistiques uniquement) -->
+                    <Grid Visibility="{Binding IsDashboardVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+            
+                        <!-- Cartes statistiques -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            
+                            <!-- Carte statistique 1 : Total des livres -->
+                            <Border Grid.Column="0" 
+                                    Background="White" 
+                                    CornerRadius="5" 
+                                    Margin="0,0,10,0" 
+                                    Padding="15">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" 
+                                               Text="Total des livres" 
+                                               FontSize="14" 
+                                               Foreground="#7f8c8d"/>
+                                    
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding TotalBooks}" 
+                                               FontSize="28" 
+                                               FontWeight="Bold" 
+                                               Margin="0,10,0,0"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Carte statistique 2 : Adhérents actifs -->
+                            <Border Grid.Column="1" 
+                                    Background="White" 
+                                    CornerRadius="5" 
+                                    Margin="10,0" 
+                                    Padding="15">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" 
+                                               Text="Adhérents actifs" 
+                                               FontSize="14" 
+                                               Foreground="#7f8c8d"/>
+                                    
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding ActiveMembers}" 
+                                               FontSize="28" 
+                                               FontWeight="Bold" 
+                                               Margin="0,10,0,0"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Carte statistique 3 : Emprunts en cours -->
+                            <Border Grid.Column="2" 
+                                    Background="White" 
+                                    CornerRadius="5" 
+                                    Margin="10,0" 
+                                    Padding="15">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" 
+                                               Text="Emprunts en cours" 
+                                               FontSize="14" 
+                                               Foreground="#7f8c8d"/>
+                                    
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding ActiveLoans}" 
+                                               FontSize="28" 
+                                               FontWeight="Bold" 
+                                               Margin="0,10,0,0"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Carte statistique 4 : Retards -->
+                            <Border Grid.Column="3" 
+                                    Background="White" 
+                                    CornerRadius="5" 
+                                    Margin="10,0,0,0" 
+                                    Padding="15">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    
+                                    <TextBlock Grid.Row="0" 
+                                               Text="Retards" 
+                                               FontSize="14" 
+                                               Foreground="#7f8c8d"/>
+                                    
+                                    <TextBlock Grid.Row="1" 
+                                               Text="{Binding OverdueLoans}" 
+                                               FontSize="28" 
+                                               FontWeight="Bold" 
+                                               Foreground="#e74c3c" 
+                                               Margin="0,10,0,0"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+            
+                        <!-- Activités récentes -->
+                        <Border Grid.Row="1" 
+                                Background="White" 
+                                Margin="0,20,0,0" 
+                                CornerRadius="5" 
+                                Padding="20">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                
+                                <TextBlock Grid.Row="0" 
+                                           Text="Activités récentes" 
+                                           FontSize="18" 
+                                           FontWeight="SemiBold" 
+                                           Margin="0,0,0,15"/>
+                                
+                                <ListView Grid.Row="1" 
+                                          ItemsSource="{Binding RecentActivities}" 
+                                          BorderThickness="0" 
+                                          Background="Transparent">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,5">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <Ellipse Grid.Column="0" 
+                                                         Width="10" 
+                                                         Height="10" 
+                                                         Fill="{Binding StatusColor}" 
+                                                         Margin="0,0,10,0" 
+                                                         VerticalAlignment="Center"/>
+                                                
+                                                <TextBlock Grid.Column="1" 
+                                                           Text="{Binding Description}" 
+                                                           TextWrapping="Wrap" 
+                                                           VerticalAlignment="Center"/>
+                                                
+                                                <TextBlock Grid.Column="2" 
+                                                           Text="{Binding Date, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}" 
+                                                           Foreground="#7f8c8d" 
+                                                           Margin="10,0,0,0" 
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Message pour accéder à la gestion des livres -->
+                        <TextBlock Grid.Row="2" 
+                                  Text="Pour accéder à la liste des livres, cliquez sur 'Gestion des livres' dans le menu latéral."
+                                  Margin="0,15,0,0"
+                                  FontStyle="Italic"
+                                  Foreground="#7f8c8d"
+                                  HorizontalAlignment="Center"/>
+                    </Grid>
+        
+                    <!-- Vue des livres -->
+                    <ContentControl Visibility="{Binding IsBooksVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <local:BooksView DataContext="{Binding BooksViewModel}" />
+                    </ContentControl>
+                    
+                    <!-- Vue des adhérents -->
+                    <ContentControl Visibility="{Binding IsMembersVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <local:AdherentsView DataContext="{Binding AdherentsViewModel}" />
+                    </ContentControl>
+                    
+                    <ContentControl Visibility="{Binding IsLoansVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <local:LoansView DataContext="{Binding LoansViewModel}" />
+                    </ContentControl>
+
+        
+                    <!-- Autres vues (adhérents, emprunts, etc.) à ajouter ici -->
+                    <!-- Visibilité conditionnelle à l'aide des propriétés IsMembersVisible, IsLoansVisible, etc. -->
+                </Grid>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

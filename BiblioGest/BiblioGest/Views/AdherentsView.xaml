@@ -1,0 +1,184 @@
+<UserControl x:Class="BiblioGest.Views.AdherentsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- En-tête avec boutons d'action -->
+        <Grid Grid.Row="0" Margin="0,0,0,15">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="Liste des adhérents" 
+                       FontSize="22" 
+                       FontWeight="SemiBold" 
+                       VerticalAlignment="Center"/>
+            
+            <StackPanel Grid.Column="1" 
+                        Orientation="Horizontal" 
+                        HorizontalAlignment="Right">
+                <Button Content="Ajouter un adhérent" 
+                        Margin="0,0,10,0"
+                        Padding="10,5"
+                        Background="#27ae60"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding AddCommand}"/>
+            </StackPanel>
+        </Grid>
+        
+        <!-- Zone de recherche et filtres -->
+        <Border Grid.Row="1" 
+                Background="White" 
+                CornerRadius="5" 
+                Padding="15" 
+                Margin="0,0,0,15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Grid.Column="0" 
+                         Padding="10,5" 
+                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                         />
+                
+                <ComboBox Grid.Column="1" 
+                          Margin="10,0,0,0" 
+                          Width="150"
+                          SelectedItem="{Binding SelectedStatus}"
+                          ItemsSource="{Binding StatusList}"
+                          DisplayMemberPath="Label">
+                </ComboBox>
+                
+                <Button Grid.Column="2" 
+                        Content="Rechercher" 
+                        Margin="10,0,0,0"
+                        Padding="10,5"
+                        Background="#3498db"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding SearchCommand}"/>
+            </Grid>
+        </Border>
+        
+        <!-- Liste des adhérents -->
+        <Border Grid.Row="2" 
+                Background="White" 
+                CornerRadius="5" 
+                Padding="0" 
+                Margin="0,0,0,15">
+            <Grid>
+                <!-- DataGrid principal -->
+                <DataGrid ItemsSource="{Binding Adherents}" 
+                          AutoGenerateColumns="False" 
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="True"
+                          GridLinesVisibility="Horizontal"
+                          HeadersVisibility="Column"
+                          BorderThickness="0"
+                          RowHeaderWidth="0"
+                          AlternatingRowBackground="#f9f9f9"
+                          SelectedItem="{Binding SelectedAdherent}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding AdherentId}" Width="60"/>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="150"/>
+                        <DataGridTextColumn Header="Prénom" Binding="{Binding Prenom}" Width="150"/>
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="200"/>
+                        <DataGridTextColumn Header="Téléphone" Binding="{Binding Telephone}" Width="120"/>
+                        <DataGridTextColumn Header="Date d'inscription" Binding="{Binding DateInscription, StringFormat='{}{0:dd/MM/yyyy}'}" Width="120"/>
+                        <DataGridTextColumn Header="Statut" Binding="{Binding Statut}" Width="100"/>
+                        <DataGridTemplateColumn Header="Actions" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="Modifier" 
+                                                Margin="0,0,5,0"
+                                                Padding="8,3"
+                                                Background="#f39c12"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"/>
+                                        <Button Content="Détails" 
+                                                Margin="5,0"
+                                                Padding="8,3"
+                                                Background="#3498db"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Command="{Binding DataContext.DetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"/>
+                                        <Button Content="Supprimer" 
+                                                Margin="5,0,0,0"
+                                                Padding="8,3"
+                                                Background="#e74c3c"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                
+                <!-- Indicateur de chargement -->
+                <Grid Visibility="{Binding IsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Rectangle Fill="#80000000"/>
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="Chargement en cours..." Foreground="White" FontSize="16" Margin="0,0,0,10"/>
+                        <ProgressBar IsIndeterminate="True" Width="200" Height="10"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Border>
+        
+        <!-- Pagination -->
+        <Border Grid.Row="3" 
+                Background="White" 
+                CornerRadius="5" 
+                Padding="10">
+            <StackPanel Orientation="Horizontal" 
+                        HorizontalAlignment="Center">
+                <Button Content="Précédent" 
+                        Margin="5,0"
+                        Padding="10,5"
+                        Background="#bdc3c7"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding PreviousPageCommand}"
+                        IsEnabled="{Binding CanGoToPreviousPage}"/>
+                
+                <TextBlock Text="{Binding PageInfo}" 
+                           VerticalAlignment="Center" 
+                           Margin="15,0"/>
+                
+                <Button Content="Suivant" 
+                        Margin="5,0"
+                        Padding="10,5"
+                        Background="#bdc3c7"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Command="{Binding NextPageCommand}"
+                        IsEnabled="{Binding CanGoToNextPage}"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

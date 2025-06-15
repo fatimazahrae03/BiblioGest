@@ -1,0 +1,158 @@
+<UserControl x:Class="BiblioGest.Views.BookFormView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:BiblioGest.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="600">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Titre du formulaire -->
+        <TextBlock Grid.Row="0" 
+                   Text="{Binding FormTitle}" 
+                   FontSize="22" 
+                   FontWeight="SemiBold" 
+                   Margin="0,0,0,20"/>
+        
+        <!-- Formulaire de saisie -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- Titre du livre -->
+                <TextBlock Text="Titre *" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding CurrentBook.Titre, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,0,15" 
+                         Padding="8"/>
+                
+                <!-- Auteur -->
+                <TextBlock Text="Auteur *" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding CurrentBook.Auteur, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,0,15" 
+                         Padding="8"/>
+                
+                <!-- ISBN -->
+                <TextBlock Text="ISBN" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding CurrentBook.ISBN, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,0,15" 
+                         Padding="8"/>
+                
+                <!-- Année -->
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Année de publication" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding CurrentBook.Annee, UpdateSourceTrigger=PropertyChanged}" 
+                                 Padding="8"/>
+                    </StackPanel>
+                    
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Nombre d'exemplaires *" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding CurrentBook.NombreExemplaires, UpdateSourceTrigger=PropertyChanged}" 
+                                 Padding="8"/>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Éditeur -->
+                <TextBlock Text="Éditeur" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding CurrentBook.Editeur, UpdateSourceTrigger=PropertyChanged}" 
+                         Margin="0,0,0,15" 
+                         Padding="8"/>
+                
+                <!-- Image de couverture -->
+                <TextBlock Text="URL de l'image de couverture" Margin="0,0,0,5"/>
+                <Grid Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBox Grid.Column="0" 
+                             Text="{Binding CurrentBook.ImageCouverture, UpdateSourceTrigger=PropertyChanged}" 
+                             Padding="8"/>
+                    
+                    <Button Grid.Column="1" 
+                            Content="Prévisualiser" 
+                            Command="{Binding PreviewImageCommand}"
+                            Margin="10,0,0,0" 
+                            Padding="8,0"/>
+                </Grid>
+                
+                <!-- Prévisualisation de l'image (conditionnelle) -->
+                <Border Margin="0,0,0,15" 
+                        BorderThickness="1" 
+                        BorderBrush="#bdc3c7" 
+                        Padding="5"
+                        MaxHeight="150"
+                        Visibility="{Binding ImagePreviewVisibility}">
+                    <Image Source="{Binding CurrentBook.ImageCouverture}" 
+                           Stretch="Uniform" 
+                           StretchDirection="DownOnly"/>
+                </Border>
+                
+                <!-- Catégorie -->
+                <TextBlock Text="Catégorie *" Margin="0,0,0,5"/>
+                <ComboBox ItemsSource="{Binding Categories}" 
+                          DisplayMemberPath="Nom"
+                          SelectedItem="{Binding SelectedCategory}"
+                          Margin="0,0,0,15" 
+                          Padding="8"/>
+                
+                <!-- Résumé -->
+                <TextBlock Text="Résumé" Margin="0,0,0,5"/>
+                <TextBox Text="{Binding CurrentBook.Resume, UpdateSourceTrigger=PropertyChanged}" 
+                         TextWrapping="Wrap" 
+                         AcceptsReturn="True" 
+                         Height="100" 
+                         Margin="0,0,0,15" 
+                         Padding="8"/>
+                
+                <!-- Note sur les champs obligatoires -->
+                <TextBlock Text="* Champs obligatoires" 
+                           Foreground="#7f8c8d" 
+                           FontStyle="Italic" 
+                           Margin="0,0,0,15"/>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- Boutons d'action -->
+        <Grid Grid.Row="2" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Message d'erreur -->
+            <TextBlock Grid.Column="0" 
+                       Text="{Binding ErrorMessage}" 
+                       Foreground="#e74c3c" 
+                       VerticalAlignment="Center"/>
+            
+            <!-- Bouton Annuler -->
+            <Button Grid.Column="1" 
+                    Content="Annuler" 
+                    Command="{Binding CancelCommand}" 
+                    Style="{StaticResource SecondaryButtonStyle}" 
+                    Width="100" 
+                    Margin="0,0,10,0"/>
+            
+            <!-- Bouton Sauvegarder -->
+            <Button Grid.Column="2" 
+                    Content="{Binding SaveButtonText}" 
+                    Command="{Binding SaveCommand}" 
+                    Style="{StaticResource DefaultButtonStyle}" 
+                    Width="100"/>
+        </Grid>
+    </Grid>
+</UserControl>
